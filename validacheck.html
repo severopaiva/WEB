@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function validaveiculo(v1,v2,v3) {
+       if (v1.checked) {
+          alert("Bike");
+       } 
+       if (v2.checked) {
+           alert("Carro");
+       }
+       if  (v3.checked) {
+           alert("Barco");
+       } 
+      }
+
+</script>
+</head>
+
+<body>
+<h2>Checkboxes</h2>
+<p>Escolha veículos:</p>
+<form>
+  <input type="checkbox" id="v1" value="Bike">
+  <label for="v1"> Bike</label><br>
+  <input type="checkbox" id="v2"  value="Carro">
+  <label for="veiculo2"> Carro</label><br>
+  <input type="checkbox" id="v3" value="Barco">
+  <label for="v3"> Barco</label><br><br>
+  <button onclick="validaveiculo(v1,v2,v3);">Confirma</button>
+</form> 
+</body>
+</html>

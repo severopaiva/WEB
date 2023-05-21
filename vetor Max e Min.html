@@ -1,0 +1,43 @@
+<html> 
+<head> 
+	<title> Vetor </title> 
+	<h1> Demonstração do uso de métodos para  vetor <h1>
+<script>
+
+// Inicialização
+
+var vetor = [5,4,3,7,2];
+
+document.write("Execução Programa Principal: ","<br><br>");
+
+function maior (vet) {
+	maior = -9999;
+	for (i=0; i<vet.length; i++) {
+     	    if (vet [i] > maior) {
+                          maior = vet[i]; }
+                  }
+	return (maior); 
+}		           	  	  		  	
+
+function menor (vet) {
+	alert("Cheguei");
+	menor = 9999;
+	for (i=0; i<vet.length; i++) {
+     	    if (vet [i] < menor) {
+                          menor = vet[i]; }
+                  }
+	alert("Saindo");
+	return (menor); 
+}		           	  	  		  	
+  	
+document.write("<br> O maior Elemento: ", maior(vetor), "<br>");
+document.write("<br> O maior Elemento: ", menor(vetor), "<br>");
+
+</script> 
+</head> 
+
+<body> 
+<p> Corpo da Página <p>
+</body>
+</html>
+

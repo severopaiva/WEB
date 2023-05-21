@@ -1,0 +1,20 @@
+<html> 
+<head> 
+<title>Texto</title>
+
+<script>
+	function maiuscula (texto) {
+	    texto.value = texto.value.toUpperCase(); 
+	} 
+</script>
+</head> 
+<body> 
+<form> 
+   <label for="nome">Nome Maiúsculo: </label><br>
+  <input type="text" id="nome"  onkeyUp="maiuscula (this);" value=""><br>
+   <label for="normal">Nome Normal: </label> <br> 
+   <input type="text" id="letranormal" value=""> <br> <br>  
+  <input type="submit" value="Confirma">
+</form>
+</body>
+</html> 

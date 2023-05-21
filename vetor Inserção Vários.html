@@ -1,0 +1,33 @@
+<html> 
+<head> 
+	<title> Vetor </title> 
+	<h1> Demonstração Criação Vetor <h1>
+<script>
+
+// Inicialização
+
+var vetor = [];
+var ind = 0
+
+document.write("Execução Programa Principal: ","<br><br>");
+
+document.write("<br> O vetor inicial é: ", vetor, "<br>");
+
+var qtd = prompt ("Quantos elementos a inserir: ");
+
+for (i=0;i <= qtd-1;i++) {
+      elemento = prompt ("Digite um número: ");
+      vetor.splice(i,1,elemento);			// Insere elemento na posição i
+}
+  	
+document.write("<br> O vetor agora é: ", vetor, "<br>");   // Mostra resultado
+
+
+</script> 
+</head> 
+
+<body> 
+<p> Corpo da Página <p>
+</body>
+</html>
+

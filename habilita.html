@@ -1,0 +1,31 @@
+<html> 
+<head> 
+<title>Habilita</title> 
+<script>  
+function Habilitar(opcao) { 
+     if (opcao) { 
+        document.formulario.nome.disabled = false;
+        document.getElementById("desabilita").checked = !document.getElementById("habilita").checked;
+      }
+     else {   
+         document.formulario.nome.value = ""; 
+         document.formulario.nome.disabled = true;
+         document.getElementById("habilita").checked = !document.getElementById("desabilita").checked; 
+     }
+}
+</script> 
+</head> 
+
+<body> 
+<form name="formulario" 
+
+<label class="teste">
+    <input type="radio" onClick="Habilitar(1);" id="habilita" checked >Habilitar 
+</label>
+    <input type="radio" id="desabilita" value="Desabilitar"
+		 onClick="Habilitar(0);" >Desabilitar<br/> 
+    Campo: <input type="text" name="nome" > 
+</form> 
+
+</body>
+ </html> 

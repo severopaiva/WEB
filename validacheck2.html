@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script>
+function validaveiculo() {
+   document.write("Na func");
+   veic1 = document.getElementById('v1');
+   v2 = document.getElementById('v2');
+   v3 = document.getElementById('v3');
+   document.write("v1: ", veic1);
+   if (veic1.checked) {
+        alert("Bike");
+    } else {
+              if (v2.checked) {
+                  alert("Carro");
+               }
+       } 
+    }
+</script>
+
+</head>
+<body>
+
+<h2>Checkboxes</h2>
+<p>Escolha um veículo:</p>
+
+<form>
+  <input type="checkbox" id="v1" value="Bike">
+
+  <input type="checkbox" id="v2"  value="Carro">
+
+  <input type="checkbox" id="v3" value="Barco">
+
+  <button onclick="validaveiculo();">Confirma</button>
+</form> 
+
+</body>
+</html>

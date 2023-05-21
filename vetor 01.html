@@ -1,0 +1,32 @@
+<html> 
+<head> 
+	<title> Vetor </title> 
+	<h1> Demonstração vetor <h1>
+<script>
+// Corpos  das  Funções
+
+function lervetor (vet) {
+	for (i=0; i<vet.length; i++) {
+                  vet [i] = prompt ("Digite componente: ");
+	}
+}
+
+function exibevetor (vet) {
+	for (i=0; i<vet.length; i++) {
+                 document.write("Componente [",  i,"]: ", vet[i],"<br>"); }
+}
+
+//Programa Principal
+document.write("Execucução Programa Principal: ","<br><br>");
+var vetor = [0,0,0,0,0];
+lervetor (vetor);
+exibevetor(vetor);
+document.write("<br> Finalização do Programa Principal: ");
+</script> 
+</head> 
+
+<body> 
+<p> Corpo da Página <p>
+</body>
+</html>
+
