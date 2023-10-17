@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Validação de Formulário</title>
+</head>
+<body>
+
+<form name="frmTeste" method="post" action="#" onsubmit="return validaForm(this);">
+  <p>Validação de formulário</p>
+  <p>Nome: <input type="text" name="nome" id="nome" /></p>
+  <p>Email: <input type="text" name="email" id="email" /></p>
+  <p>Sexo:
+    <label><input type="radio" name="sexo" value="M" /> Masculino</label>
+    <label><input type="radio" name="sexo" value="F" /> Feminino</label>
+  </p>
+  <p>Profissão:
+    <select name="cargo">
+      <option value="">Selecione o cargo</option>
+      <option value="programador">Programador</option>
+      <option value="designer">Designer</option>
+      <option value="tester">Tester</option>
+      <option value="Estudante">Estudante</option>
+      <option value="todas">Todas</option>
+    </select>
+  </p>
+  <p><input type="submit" name="sbt" value="Enviar" /></p>
+</form>
+
+<script>
+function validaForm(frm) {
+  // Verifica se o campo nome foi preenchido e contém no mínimo três caracteres.
+  if(frm.nome.value === "" || frm.nome.value === null || frm.nome.value.length < 3) {
+    alert("Por favor, indique o seu nome.");
+    frm.nome.focus();
+    return false;
+  }
+  
+  // O campo de e-mail precisa conter "@" e "." e não pode estar vazio.
+  if(frm.email.value.indexOf("@") === -1 || frm.email.value.indexOf(".") === -1 || frm.email.value === "" || frm.email.value === null) {
+    alert("Por favor, indique um e-mail válido.");
+    frm.email.focus();
+    return false;
+  }
+  
+  // O usuário precisa escolher um dos radio buttons: Masculino ou Feminino.
+  var escolhaSexo = false;
+  for(var i = 0; i < frm.sexo.length; i++) {
+    if(frm.sexo[i].checked) {
+      escolhaSexo = true;
+      break;
+    }
+  }
+  if(!escolhaSexo) {
+    alert("Por favor, indique o seu sexo.");
+    return false;
+  }
+  
+  // Valida a profissão: O utilizador tem de escolher uma entre as três opções.
+  if(frm.cargo.value === "" || frm.cargo.value === "todas") {
+    alert("Por favor, escolha uma profissão.");
+    frm.cargo.focus();
+    return false;
+  }
+  
+  return true; // Retorna true para validar e enviar o formulário se tudo OK.
+}
+</script>
+
+</body>
+</html> 
