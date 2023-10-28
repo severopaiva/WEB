@@ -1,0 +1,19 @@
+async function NewsFromBBC() {
+  const mainUrl = "https://newsapi.org/v1/articles?source=bbc-news&sortBy=top&apiKey=4dbc17e007ab436fb66416009dfb59a8";
+
+  const response = await fetch(mainUrl);
+  const data = await response.json();
+
+  const articles = data["articles"];
+  const results = [];
+
+  for (const article of articles) {
+    results.push(article["title"]);
+  }
+
+  for (let i = 0; i < results.length; i++) {
+    console.log(i + 1, results[i]);
+  }
+}
+
+NewsFromBBC();
