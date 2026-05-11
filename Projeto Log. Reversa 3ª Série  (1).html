@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logística Reversa 2026 - Prof.ª Ana Almeida</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .slide-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .slide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .bg-gradient-eco {
+            background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #22c55e;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .sticky-header {
+            backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .logo-container img {
+            max-height: 50px;
+            width: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Navegação com Logomarcas -->
+    <nav class="sticky top-0 z-50 sticky-header border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Área das Logos -->
+                <div class="flex items-center space-x-4 logo-container">
+                    <!-- Espaço para sua logomarca -->
+                    <img src="logo_professora.png" alt="Logomarca Profª Ana Almeida" onerror="this.src='https://via.placeholder.com/120x50?text=Sua+Logo'">
+                    <div class="h-8 w-px bg-gray-300"></div>
+                    <!-- Espaço para logomarca do governo -->
+                    <img src="logo_governo.png" alt="Logomarca Governo do Estado" onerror="this.src='https://via.placeholder.com/120x50?text=Logo+Estado'">
+                </div>
+
+                <div class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="#inicio" class="nav-link text-gray-600 hover:text-green-600">Início</a>
+                    <a href="#conceito" class="nav-link text-gray-600 hover:text-green-600">Conceito</a>
+                    <a href="#legislacao" class="nav-link text-gray-600 hover:text-green-600">Legislação</a>
+                    <a href="#exemplos" class="nav-link text-gray-600 hover:text-green-600">Exemplos</a>
+                    <a href="#desafio" class="nav-link text-gray-600 hover:text-green-600">Desafio</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section / Capa -->
+    <header id="inicio" class="bg-gradient-eco text-white py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 uppercase">PROJETO LOGÍSTICA REVERSA</h1>
+            <p class="text-xl md:text-2xl font-light opacity-90 mb-2">Ensino Médio | 3ª Série — 2º Bimestre</p>
+            <p class="text-2xl font-bold text-green-300 mb-6">Prof.ª Ana Almeida</p>
+            <div class="inline-block bg-white text-green-800 px-6 py-2 rounded-full font-bold shadow-lg">
+                ANO LETIVO 2026
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-12 space-y-24">
+
+        <!-- O que é? -->
+        <section id="conceito" class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="text-green-600 font-bold tracking-widest uppercase text-sm">Definição</span>
+                <h2 class="text-3xl font-bold mt-2 mb-6">O que é Logística Reversa?</h2>
+                <p class="text-gray-600 leading-relaxed mb-4">
+                    É um instrumento de desenvolvimento económico e social caracterizado por um conjunto de ações, procedimentos e meios destinados a viabilizar a recolha e a restituição dos resíduos sólidos ao setor empresarial.
+                </p>
+                <div class="bg-green-100 p-4 border-l-4 border-green-500 italic text-green-800">
+                    "O lixo que volta para o ciclo produtivo deixa de ser lixo e passa a ser matéria-prima."
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl shadow-inner">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <i class="fas fa-arrow-right text-gray-300"></i>
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl shadow-inner">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <i class="fas fa-arrow-right text-gray-300"></i>
+                    <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center text-white text-2xl shadow-inner">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                </div>
+                <h3 class="text-center font-bold text-gray-700">O Ciclo do Produto</h3>
+                <p class="text-sm text-center text-gray-500 mt-2">Fabricação → Consumo → Descarte Adequado → Reutilização</p>
+            </div>
+        </section>
+
+        <!-- Importância e Legislação -->
+        <section id="legislacao" class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold">Importância e Enquadramento Legal</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-4">
+                        <div class="mt-1 bg-green-100 p-2 rounded-lg text-green-600">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Política Nacional de Resíduos Sólidos (PNRS)</h4>
+                            <p class="text-gray-600 text-sm">Lei que estabelece a responsabilidade partilhada pelo ciclo de vida dos produtos entre fabricantes, importadores, distribuidores, comerciantes e consumidores.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="mt-1 bg-green-100 p-2 rounded-lg text-green-600">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Benefícios Ambientais</h4>
+                            <p class="text-gray-600 text-sm">Redução da extração de recursos naturais e diminuição da poluição ambiental.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-4">
+                        <div class="mt-1 bg-blue-100 p-2 rounded-lg text-blue-600">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Benefícios Económicos</h4>
+                            <p class="text-gray-600 text-sm">Geração de empregos verdes e economia na aquisição de matérias-primas.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="mt-1 bg-yellow-100 p-2 rounded-lg text-yellow-600">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Papel do Consumidor</h4>
+                            <p class="text-gray-600 text-sm">Efetuar a entrega dos produtos pós-consumo nos postos de recolha (PEVs).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exemplos de Materiais -->
+        <section id="exemplos">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold">Materiais Abrangidos</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="slide-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="text-green-500 text-3xl mb-4"><i class="fas fa-car"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Pneus</h3>
+                    <p class="text-gray-500 text-sm">Recolha e destinação final ambientalmente correta.</p>
+                </div>
+                <div class="slide-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="text-red-500 text-3xl mb-4"><i class="fas fa-battery-half"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Pilhas e Baterias</h3>
+                    <p class="text-gray-500 text-sm">Contêm metais pesados tóxicos que contaminam o ambiente.</p>
+                </div>
+                <div class="slide-card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="text-blue-500 text-3xl mb-4"><i class="fas fa-laptop"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Eletrónicos</h3>
+                    <p class="text-gray-500 text-sm">Computadores e telemóveis com componentes valiosos.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Desafio/Atividade -->
+        <section id="desafio" class="bg-green-900 text-white rounded-3xl p-8 md:p-12 relative overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="text-3xl font-bold mb-6">Desafio Escolar 2026</h2>
+                <p class="text-green-100 mb-8 max-w-2xl">
+                    Como podemos incentivar a logística reversa na nossa comunidade?
+                </p>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+                        <p class="text-sm font-bold">Passo 1: Identificar o resíduo.</p>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+                        <p class="text-sm font-bold">Passo 2: Localizar o ponto de entrega.</p>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+                        <p class="text-sm font-bold">Passo 3: Consciencializar o bairro.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-gray-100 py-12 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-green-800 font-bold">Prof.ª Ana Almeida</p>
+            <p class="text-gray-500 font-medium">Logística Reversa &bull; Projeto Escolar 2026</p>
+            <p class="text-gray-400 text-sm mt-2">Cabedelo, PB — 3ª Série do Ensino Médio</p>
+        </div>
+    </footer>
+
+    <!-- Botão Voltar ao Topo -->
+    <a href="#inicio" class="fixed bottom-8 right-8 bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transition-colors z-50">
+        <i class="fas fa-chevron-up"></i>
+    </a>
+
+</body>
+</html>
