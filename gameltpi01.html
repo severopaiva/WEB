@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Builder: Arquiteto da Rede</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --accent-color: #6366f1;
+            --secondary-color: #ec4899;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #e2e8f0;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .code-font { font-family: 'Fira Code', monospace; }
+
+        .glass-panel {
+            background: rgba(15, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+        }
+
+        .option-card {
+            background: rgba(30, 30, 40, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 64px;
+        }
+
+        .option-card:hover:not(:disabled) {
+            border-color: var(--accent-color);
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .correct { background-color: #10b981 !important; color: white !important; border-color: #10b981 !important; }
+        .wrong { background-color: #ef4444 !important; color: white !important; border-color: #ef4444 !important; }
+
+        .progress-indicator { transition: width 0.4s ease; }
+        
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="game-container" class="max-w-4xl w-full">
+        <!-- TELA INICIAL -->
+        <div id="start-screen" class="text-center space-y-8">
+            <div class="relative inline-block">
+                <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-lg blur opacity-75 animate-pulse"></div>
+                <h1 class="relative px-8 py-4 bg-black rounded-lg text-4xl md:text-6xl font-bold tracking-tight">WEB_BUILDER_v1.0</h1>
+            </div>
+            
+            <p class="text-indigo-300 text-lg md:text-xl max-w-2xl mx-auto">
+                Domine o Modelo Cliente-Servidor e a Anatomia das Tags HTML para se tornar um Desenvolvedor Full-Stack.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-indigo-200/60">
+                <div class="p-4 glass-panel">🌐 Cliente-Servidor</div>
+                <div class="p-4 glass-panel">🎨 Front vs Back-End</div>
+                <div class="p-4 glass-panel">🏗️ Estrutura HTML5</div>
+            </div>
+
+            <button onclick="startGame()" class="px-12 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-full transition-all shadow-lg shadow-indigo-500/30 active:scale-95">
+                INICIAR DESENVOLVIMENTO
+            </button>
+        </div>
+
+        <!-- TELA DO JOGO -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-end mb-6">
+                <div class="space-y-1">
+                    <p class="text-xs text-indigo-400 font-bold tracking-widest uppercase">Módulo de Conhecimento</p>
+                    <h2 id="step-counter" class="text-2xl font-bold">Questão 1/10</h2>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-pink-400 font-bold mb-1">PONTUAÇÃO</p>
+                    <p id="score-display" class="text-2xl font-bold tracking-widest">000</p>
+                </div>
+            </div>
+
+            <div class="w-full h-2 bg-zinc-800 rounded-full mb-8 overflow-hidden">
+                <div id="progress-bar" class="progress-indicator h-full bg-gradient-to-r from-indigo-500 to-pink-500 w-0"></div>
+            </div>
+
+            <div class="glass-panel p-6 md:p-10 mb-8 min-h-[320px] flex flex-col justify-center">
+                <div id="visual-context" class="mb-8 flex justify-center">
+                    <!-- Ilustração ou Bloco de Código -->
+                </div>
+                <h3 id="question-text" class="text-xl md:text-2xl font-medium text-center leading-relaxed">
+                    <!-- Pergunta aqui -->
+                </h3>
+            </div>
+
+            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Botões dinâmicos -->
+            </div>
+        </div>
+
+        <!-- TELA FINAL -->
+        <div id="end-screen" class="hidden text-center space-y-8">
+            <h2 class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-pink-400">DEPLOY CONCLUÍDO</h2>
+            
+            <div id="final-results" class="glass-panel p-8 inline-block min-w-[320px]">
+                <!-- Estatísticas -->
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button onclick="location.reload()" class="px-8 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-all">REINICIAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const database = [
+            {
+                type: "code",
+                content: "&lt;h1&gt;Título&lt;/h1&gt;",
+                question: "Para que serve a tag &lt;h1&gt; na estrutura de um site?",
+                options: ["Definir um parágrafo", "Criar o título principal", "Inserir um rodapé", "Definir o corpo do site"],
+                correct: 1
+            },
+            {
+                type: "logic",
+                content: "🌐",
+                question: "No modelo Cliente-Servidor, o Navegador (Chrome/Edge) representa qual papel?",
+                options: ["Servidor", "Banco de Dados", "Cliente", "Back-End"],
+                correct: 2
+            },
+            {
+                type: "code",
+                content: "&lt;title&gt;Meu Site&lt;/title&gt;",
+                question: "Onde a tag &lt;title&gt; deve obrigatoriamente estar localizada?",
+                options: ["Dentro do body", "Dentro do footer", "Dentro do head", "Após o html"],
+                correct: 2
+            },
+            {
+                type: "logic",
+                content: "🎨 Visual, Botões, Animações",
+                question: "As tecnologias que rodam diretamente no navegador do usuário compõem o:",
+                options: ["Back-End", "Front-End", "Database", "API Central"],
+                correct: 1
+            },
+            {
+                type: "code",
+                content: "&lt;div&gt; e &lt;section&gt;",
+                question: "Qual a função principal destas tags na construção de uma página?",
+                options: ["Alterar cores de textos", "Organizar conteúdos", "Criar links externos", "Definir idiomas"],
+                correct: 1
+            },
+            {
+                type: "logic",
+                content: "⚙️ Lógica, Segurança, Servidor",
+                question: "O processamento de dados e a comunicação com o banco de dados é responsabilidade do:",
+                options: ["Front-End", "Front-End Framework", "Back-End", "Navegador Cliente"],
+                correct: 2
+            },
+            {
+                type: "code",
+                content: "&lt;footer&gt;",
+                question: "Qual componente semântico o &lt;footer&gt; representa?",
+                options: ["Cabeçalho principal", "Conteúdo lateral", "Rodapé da página", "Seção de imagens"],
+                correct: 2
+            },
+            {
+                type: "code",
+                content: "&lt;p&gt;Texto&lt;/p&gt;",
+                question: "A tag &lt;p&gt; é utilizada para definir qual elemento?",
+                options: ["Página completa", "Parágrafo de texto", "Ponto de ancoragem", "Painel de controle"],
+                correct: 1
+            },
+            {
+                type: "logic",
+                content: "📄 ",
+                question: "Qual tag envolve TODO o conteúdo visível de um site para o usuário?",
+                options: ["A tag head", "A tag html", "A tag body", "A tag div"],
+                correct: 2
+            },
+            {
+                type: "logic",
+                content: "💻 Servidor Respondendo",
+                question: "No modelo Cliente-Servidor, quando o servidor envia os arquivos solicitados, ele está enviando uma:",
+                options: ["Requisição", "Resposta (Response)", "Consulta SQL", "Tag Semântica"],
+                correct: 1
+            }
+        ];
+
+        let gameQuestions = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        function startGame() {
+            gameQuestions = [...database].sort(() => Math.random() - 0.5);
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = gameQuestions[currentIdx];
+            document.getElementById('step-counter').innerText = `Questão ${currentIdx + 1}/10`;
+            document.getElementById('question-text').innerHTML = q.question;
+            
+            const visual = document.getElementById('visual-context');
+            if(q.type === 'code') {
+                visual.innerHTML = `<div class="bg-zinc-900 px-6 py-4 rounded-lg border border-zinc-700 code-font text-indigo-400 text-lg shadow-inner">${q.content}</div>`;
+            } else {
+                visual.innerHTML = `<div class="text-4xl floating">${q.content}</div>`;
+            }
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "option-card p-4 rounded-xl font-medium outline-none";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i, btn);
+                container.appendChild(btn);
+            });
+
+            const progress = ((currentIdx + 1) / 10) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function checkAnswer(idx, btn) {
+            const q = gameQuestions[currentIdx];
+            const allBtns = document.querySelectorAll('.option-card');
+            allBtns.forEach(b => b.disabled = true);
+
+            if(idx === q.correct) {
+                btn.classList.add('correct');
+                score += 100;
+                document.getElementById('score-display').innerText = score.toString().padStart(3, '0');
+            } else {
+                btn.classList.add('wrong');
+                allBtns[q.correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentIdx++;
+                if(currentIdx < gameQuestions.length) {
+                    loadQuestion();
+                } else {
+                    showFinal();
+                }
+            }, 1800);
+        }
+
+        function showFinal() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            const percent = (score / 1000) * 100;
+            let title = "";
+            let sub = "";
+
+            if(percent === 100) { title = "Full-Stack Senior"; sub = "Domínio total das ferramentas web!"; }
+            else if(percent >= 70) { title = "Desenvolvedor Junior"; sub = "Excelente base de conhecimento."; }
+            else if(percent >= 50) { title = "Estagiário Web"; sub = "Continue praticando as tags básicas."; }
+            else { title = "Entusiasta Digital"; sub = "Revise o modelo cliente-servidor."; }
+
+            document.getElementById('final-results').innerHTML = `
+                <p class="text-indigo-400 font-bold tracking-widest uppercase text-xs mb-2">Perfil de Desenvolvedor</p>
+                <h3 class="text-3xl font-bold mb-4">${title}</h3>
+                <div class="h-1 bg-zinc-800 w-full mb-4"></div>
+                <p class="text-5xl font-bold mb-2">${percent}%</p>
+                <p class="text-zinc-500 mb-6">${sub}</p>
+                <div class="bg-black/40 p-4 rounded text-xs font-mono text-indigo-300">
+                    STATUS: Deploy Finalizado com Código 200 (OK)
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
