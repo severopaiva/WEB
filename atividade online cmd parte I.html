@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Master: O Desafio Visual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+
+        body {
+            background-color: #0a0a0a;
+            color: #00ff41; /* Clássico Matrix/Terminal */
+            font-family: 'Fira Code', monospace;
+        }
+
+        .terminal-window {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background-color: #323233;
+            padding: 8px 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .command-btn {
+            background: #2d2d2d;
+            border: 1px solid #444;
+            color: #aaa;
+            transition: all 0.2s;
+        }
+
+        .command-btn:hover {
+            background: #00ff41;
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        .cli-output-img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #444;
+            image-rendering: pixelated;
+        }
+
+        .correct { border: 4px solid #27c93f !important; }
+        .wrong { border: 4px solid #ff5f56 !important; }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 255, 65, 0.1);
+            animation: scanline 8s linear infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="scanline"></div>
+
+    <div id="game-container" class="max-w-4xl w-full">
+        <!-- TELA INICIAL -->
+        <div id="start-screen" class="text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">C:\> TERMINAL MASTER</h1>
+            <p class="text-xl text-green-700 mb-8">Associe a saída visual ao comando correto do CMD.</p>
+            <button onclick="startGame()" class="px-10 py-4 border-2 border-green-500 hover:bg-green-500 hover:text-black font-bold text-xl transition-all">
+                INICIAR SESSÃO
+            </button>
+        </div>
+
+        <!-- TELA DO JOGO -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-center mb-4 px-2">
+                <div>LOG: <span id="current-step">1</span>/9</div>
+                <div id="score-display">ACERTOS: 0</div>
+            </div>
+
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                    <span class="text-xs text-gray-400 ml-2">Prompt de Comando - Windows</span>
+                </div>
+                
+                <div class="p-6 bg-black min-h-[300px] flex flex-col items-center justify-center">
+                    <p class="text-sm mb-6 text-gray-400">Analise a saída abaixo e selecione o comando que a gerou:</p>
+                    
+                    <div id="output-visual" class="mb-8 w-full flex justify-center">
+                        <!-- SVG simulando a saída do comando -->
+                        <div id="visual-container" class="w-full max-w-md bg-zinc-900 p-4 border border-zinc-700 font-mono text-xs md:text-sm">
+                            <!-- Injetado via JS -->
+                        </div>
+                    </div>
+
+                    <div id="commands-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 w-full">
+                        <!-- Botões injetados via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA FINAL -->
+        <div id="end-screen" class="hidden text-center">
+            <h2 class="text-4xl font-bold mb-4">SESSÃO ENCERRADA</h2>
+            <div id="final-stats" class="text-xl mb-8"></div>
+            <button onclick="location.reload()" class="px-8 py-3 bg-green-600 text-black font-bold hover:bg-green-400">
+                RECONECTAR
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const challenges = [
+            {
+                cmd: "cls",
+                visual: `<div class="text-green-500 font-bold">C:\\Users\\Aluno> _</div>`,
+                description: "O terminal está totalmente limpo, apenas com o cursor piscando."
+            },
+            {
+                cmd: "dir",
+                visual: `<div class="text-gray-300">10/05/2024  14:30    &lt;DIR&gt;          Documentos<br>10/05/2024  14:30    &lt;DIR&gt;          Imagens<br>12/05/2024  09:15            1.450 notas.txt<br>               1 arquivo(s)          1.450 bytes</div>`,
+                description: "Listagem detalhada com data, hora e tamanho dos arquivos."
+            },
+            {
+                cmd: "dir /w",
+                visual: `<div class="text-gray-300">[Documentos]   [Imagens]   [Downloads]   notas.txt   relatorio.pdf<br>foto.jpg       trabalho.doc</div>`,
+                description: "Listagem em formato de largura (colunas), sem detalhes de data."
+            },
+            {
+                cmd: "dir /p",
+                visual: `<div class="text-gray-300">(... listagem longa ...)<br><br><span class="bg-gray-700 text-white px-2 italic">Pressione qualquer tecla para continuar . . .</span></div>`,
+                description: "Listagem que pausa a cada tela cheia."
+            },
+            {
+                cmd: "ver",
+                visual: `<div class="text-gray-300">Microsoft Windows [Versão 10.0.19045.4291]</div>`,
+                description: "Exibe a versão atual do Sistema Operacional."
+            },
+            {
+                cmd: "vol",
+                visual: `<div class="text-gray-300">O volume na unidade C é OS<br>O Número de Série do Volume é 4461-E319</div>`,
+                description: "Exibe o rótulo e o número de série do disco."
+            },
+            {
+                cmd: "date",
+                visual: `<div class="text-gray-300">A data atual é: 13/05/2024<br>Digite a nova data: (dd-mm-aa)</div>`,
+                description: "Mostra a data do sistema e permite alterá-la."
+            },
+            {
+                cmd: "time",
+                visual: `<div class="text-gray-300">A hora atual é: 10:45:32,15<br>Digite a nova hora:</div>`,
+                description: "Mostra a hora exata do sistema."
+            },
+            {
+                cmd: "exit",
+                visual: `<div class="flex items-center justify-center h-20 text-red-500 font-bold border-2 border-dashed border-red-900">TERMINAL FECHADO</div>`,
+                description: "Fecha a janela do prompt de comando."
+            }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        const allCommands = ["cls", "dir", "dir /w", "dir /p", "ver", "vol", "date", "time", "exit"];
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadChallenge();
+        }
+
+        function loadChallenge() {
+            const challenge = challenges[currentIndex];
+            document.getElementById('current-step').innerText = currentIndex + 1;
+            document.getElementById('visual-container').innerHTML = challenge.visual;
+            
+            const grid = document.getElementById('commands-grid');
+            grid.innerHTML = '';
+            
+            allCommands.forEach(cmd => {
+                const btn = document.createElement('button');
+                btn.className = 'command-btn py-3 px-2 rounded font-bold text-sm';
+                btn.innerText = cmd;
+                btn.onclick = () => checkAnswer(cmd, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, btn) {
+            const correct = challenges[currentIndex].cmd;
+            const btns = document.querySelectorAll('.command-btn');
+            btns.forEach(b => b.disabled = true);
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                btn.style.backgroundColor = '#27c93f';
+                btn.style.color = '#000';
+                score++;
+                document.getElementById('score-display').innerText = `ACERTOS: ${score}`;
+            } else {
+                btn.classList.add('wrong');
+                btn.style.backgroundColor = '#ff5f56';
+                btn.style.color = '#000';
+                // Highlight correct
+                btns.forEach(b => {
+                    if (b.innerText === correct) {
+                        b.classList.add('correct');
+                        b.style.border = '2px solid #27c93f';
+                    }
+                });
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                if (currentIndex < challenges.length) {
+                    loadChallenge();
+                } else {
+                    showEnd();
+                }
+            }, 1500);
+        }
+
+        function showEnd() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            const percent = Math.round((score / challenges.length) * 100);
+            document.getElementById('final-stats').innerHTML = `
+                <p>Comandos dominados: ${score} de ${challenges.length}</p>
+                <p class="text-4xl mt-4 text-green-400 font-bold">${percent}% de Precisão</p>
+                <p class="text-sm text-gray-500 mt-2">${percent === 100 ? 'Nível: Administrador de Sistemas' : 'Nível: Usuário em Treinamento'}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
