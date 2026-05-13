@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Architect: Operações de Arquivos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+
+        body {
+            background-color: #0a0a0c;
+            color: #00d4ff;
+            font-family: 'Fira Code', monospace;
+            overflow-x: hidden;
+        }
+
+        .terminal-container {
+            background-color: #121214;
+            border: 2px solid #2d2d30;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .cmd-btn {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            color: #aaa;
+            transition: all 0.2s;
+            text-transform: lowercase;
+        }
+
+        .cmd-btn:not(:disabled):hover {
+            border-color: #00d4ff;
+            color: #fff;
+            background: rgba(0, 212, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .correct { background-color: #00ff41 !important; color: #000 !important; border-color: #00ff41 !important; }
+        .wrong { background-color: #ff3e3e !important; color: #fff !important; border-color: #ff3e3e !important; }
+
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 212, 255, 0.1);
+            position: absolute;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            from { top: 0; }
+            to { top: 100%; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="game-wrap" class="max-w-4xl w-full relative">
+        <div class="scanline"></div>
+
+        <!-- TELA DE LOGIN -->
+        <div id="start-screen" class="text-center space-y-6">
+            <h1 class="text-4xl md:text-5xl font-bold tracking-widest text-white">FILE_ARCHITECT.SYS</h1>
+            <p class="text-cyan-600 uppercase tracking-widest text-sm">Gerenciamento de Dados e Máscaras de Arquivos</p>
+            
+            <div class="bg-zinc-900/50 p-6 border border-zinc-800 rounded text-left space-y-2 text-sm">
+                <p class="text-white font-bold underline">PARÂMETROS DA MISSÃO:</p>
+                <p>> Manipulação de arquivos (DEL, COPY, REN, TYPE)</p>
+                <p>> Redirecionamento de fluxo (> e >>)</p>
+                <p>> Máscaras de busca (* e ?)</p>
+                <p>> Criação rápida via terminal (COPY CON)</p>
+            </div>
+
+            <button onclick="initGame()" class="px-10 py-4 bg-cyan-600 hover:bg-cyan-500 text-black font-bold rounded transition-all active:translate-y-1">
+                INICIAR OPERAÇÃO
+            </button>
+        </div>
+
+        <!-- TELA DO DESAFIO -->
+        <div id="quiz-screen" class="hidden">
+            <div class="flex justify-between items-center mb-4 font-bold text-xs md:text-sm">
+                <div class="flex gap-6">
+                    <span class="text-white">ARQUIVO: <span id="current-num">1</span>/10</span>
+                    <span class="text-cyan-400">PONTOS: <span id="points-display">0</span></span>
+                </div>
+                <div class="text-zinc-500 animate-pulse">ESTADO: OPERACIONAL</div>
+            </div>
+
+            <div class="terminal-container">
+                <div class="bg-zinc-800 p-2 flex items-center justify-between border-b border-zinc-700">
+                    <span class="text-[10px] text-zinc-400 ml-2">C:\WINDOWS\system32\cmd.exe</span>
+                    <div class="flex gap-1.5 mr-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-zinc-600"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-zinc-600"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-zinc-600"></div>
+                    </div>
+                </div>
+
+                <div class="p-6 md:p-10 bg-[#0c0c0c] min-h-[420px] flex flex-col">
+                    <div id="cmd-output" class="flex-grow flex flex-col justify-center bg-black/40 border border-zinc-800 p-6 rounded mb-8 font-mono text-sm md:text-base leading-relaxed">
+                        <!-- Pergunta aqui -->
+                    </div>
+
+                    <div id="options-box" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Opções aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA DE RESULTADOS -->
+        <div id="end-screen" class="hidden text-center space-y-8">
+            <h2 class="text-4xl font-bold text-white tracking-tighter italic">LOG DE OPERAÇÃO FINALIZADO</h2>
+            <div id="final-stats" class="p-10 bg-zinc-900 border border-cyan-900 rounded-lg inline-block text-center">
+                <!-- Resultados dinâmicos -->
+            </div>
+            <div>
+                <button onclick="location.reload()" class="text-cyan-400 hover:underline font-bold tracking-widest text-sm">REINICIAR TERMINAL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const challenges = [
+            {
+                q: "Qual comando é usado para apagar todos os arquivos que começam com a letra 'a' e possuem extensão .txt?",
+                options: ["del a*.txt", "del a?.txt", "ren a*.txt", "type a*.txt"],
+                answer: 0
+            },
+            {
+                q: "Para criar um novo arquivo chamado 'nota.txt' e começar a digitar o conteúdo direto no prompt, usamos:",
+                options: ["copy nota.txt con", "type con > nota.txt", "copy con nota.txt", "ren con nota.txt"],
+                answer: 2
+            },
+            {
+                q: "Como renomear o arquivo 'teste.doc' para 'final.doc'?",
+                options: ["copy teste.doc final.doc", "ren teste.doc final.doc", "mode teste.doc final.doc", "del teste.doc > final.doc"],
+                answer: 1
+            },
+            {
+                q: "Qual comando exibe o conteúdo de um arquivo de texto diretamente na tela do prompt?",
+                options: ["mode", "copy", "type", "del"],
+                answer: 2
+            },
+            {
+                q: "Para enviar o texto 'AULA' para um arquivo novo chamado 'info.txt' (substituindo o que existir lá), usamos:",
+                options: ["echo AULA >> info.txt", "echo AULA > info.txt", "type AULA > info.txt", "copy AULA info.txt"],
+                answer: 1
+            },
+            {
+                q: "Sabendo que o comando ECHO exibe dados na ela, Para adicionar o texto 'FIM' ao final de um arquivo já existente sem apagar o conteúdo atual, usamos:",
+                options: ["echo FIM > arquivo.txt", "echo FIM >> arquivo.txt", "copy FIM arquivo.txt", "type FIM >> arquivo.txt"],
+                answer: 1
+            },
+            {
+                q: "Qual máscara (wildcard) representa um único caractere desconhecido no nome de um arquivo?",
+                options: ["O asterisco (*)", "A exclamação (!)", "O ponto final (.)", "A interrogação (?)"],
+                answer: 3
+            },
+            {
+                q: "Como copiar todos os arquivos de uma pasta para outra unidade (ex: D:)?",
+                options: ["copy *.* D:", "copy ?.? D:", "ren *.* D:", "type *.* > D:"],
+                answer: 0
+            },
+            {
+                q: "O comando 'del teste.???' irá apagar quais arquivos?",
+                options: ["Apenas arquivos sem extensão", "Arquivos com exatamente 3 letras na extensão", "Todos os arquivos da pasta", "Arquivos com 2 letras na extensão"],
+                answer: 1
+            },
+            {
+                q: "Para exibir o conteúdo de um arquivo longo fazendo uma pausa a cada tela preenchida, usamos:",
+                options: ["type arquivo.txt | mode", "more arquivo.txt", "type arquivo.txt > mode", "copy arquivo.txt con"],
+                answer: 1
+            }
+        ];
+
+        let shuffled = [];
+        let current = 0;
+        let score = 0;
+
+        function initGame() {
+            shuffled = [...challenges].sort(() => Math.random() - 0.5);
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            renderChallenge();
+        }
+
+        function renderChallenge() {
+            const item = shuffled[current];
+            document.getElementById('current-num').innerText = current + 1;
+            document.getElementById('cmd-output').innerHTML = `<p class="text-cyan-500 mb-2">C:\\PROMPT\\DESAFIO></p><p class="text-white">${item.q}</p>`;
+            
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            
+            item.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "cmd-btn p-4 rounded text-left text-sm font-bold";
+                btn.innerText = `> ${opt}`;
+                btn.onclick = () => processAnswer(i, btn);
+                box.appendChild(btn);
+            });
+        }
+
+        function processAnswer(idx, btn) {
+            const correctIdx = shuffled[current].answer;
+            const allBtns = document.querySelectorAll('.cmd-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            if(idx === correctIdx) {
+                btn.classList.add('correct');
+                score++;
+                document.getElementById('points-display').innerText = score;
+            } else {
+                btn.classList.add('wrong');
+                allBtns[correctIdx].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                current++;
+                if(current < shuffled.length) {
+                    renderChallenge();
+                } else {
+                    endGame();
+                }
+            }, 1800);
+        }
+
+        function endGame() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            let feedback = "";
+            if(score === 10) feedback = "SISTEMA INTEGRAL: ARQUITETO DE DADOS";
+            else if(score >= 7) feedback = "NÍVEL OPERACIONAL: ANALISTA";
+            else if(score >= 5) feedback = "ACESSO LIMITADO: TÉCNICO JUNIOR";
+            else feedback = "ERRO CRÍTICO: NECESSITA REBOOT";
+
+            document.getElementById('final-stats').innerHTML = `
+                <p class="text-cyan-400 font-bold mb-2">${feedback}</p>
+                <div class="h-px bg-zinc-800 w-full my-4"></div>
+                <p class="text-6xl font-bold text-white mb-2">${score}<span class="text-xl text-zinc-600">/10</span></p>
+                <p class="text-zinc-500 text-sm">PONTOS COMPUTADOS COM SUCESSO</p>
+            `;
+        }
+    </script>
+</body>
+</html>
