@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Master: Code Quest (LPTI Prática 03)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+        body {
+            background-color: #090a0f;
+            color: #f1f5f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+        }
+
+        .btn-option {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-option:not(:disabled):hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+        }
+
+        .correct {
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            border-color: #10b981 !important;
+            color: #34d399 !important;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.1) !important;
+        }
+
+        .wrong {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+            border-color: #ef4444 !important;
+            color: #f87171 !important;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .preview-window {
+            background: #ffffff;
+            color: #1e293b;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="game-container" class="max-w-6xl w-full">
+        
+        <!-- TELA INICIAL (BOOT DO PROJETO) -->
+        <div id="start-screen" class="text-center space-y-8 max-w-2xl mx-auto">
+            <div class="space-y-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-950/60 border border-indigo-500/30 text-xs text-indigo-300 font-bold uppercase tracking-widest rounded-full mb-2">
+                    ⚡ LTPI - Prof. Paiva
+                </div>
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                    WEB_MASTER
+                </h1>
+                <p class="text-zinc-400 text-lg">Simulador de Código: Roteiro 03 - Links & Figuras</p>
+            </div>
+
+            <div class="glass-panel p-6 text-left space-y-4">
+                <h3 class="text-white font-bold flex items-center gap-2">
+                    <span>🛠️</span> ESPECIFICAÇÕES DO DIAGNÓSTICO:
+                </h3>
+                <ul class="text-sm text-zinc-400 space-y-2 font-mono">
+                    <li>> Alinhamento com o Roteiro 03 de aula prática do IFPB.</li>
+                    <li>> Escopo: Atributos de imagem, âncoras locais e referências a links externos.</li>
+                    <li>> Avaliação dinâmica: 10 Atividades práticas valendo 10.0 pontos.</li>
+                </ul>
+                <div class="p-3 bg-zinc-950/80 rounded border border-zinc-800 text-xs text-zinc-500">
+                    Você atuará em um ambiente integrado de desenvolvimento. Acompanhe a renderização visual em tempo real no lado direito de acordo com as suas seleções de código no painel esquerdo.
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/20 hover:scale-105 duration-150">
+                CARREGAR ROTEIRO PRÁTICO 03
+            </button>
+        </div>
+
+        <!-- TELA DO DIAGNÓSTICO ATIVO (IDE INTEGRADA) -->
+        <div id="quiz-screen" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- ESQUERDA: EDITOR E PERGUNTAS (7 COLUNAS) -->
+            <div class="lg:col-span-7 space-y-4">
+                <!-- Status Top Bar -->
+                <div class="flex justify-between items-center px-1">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Módulos:</span>
+                        <div class="bg-zinc-900 border border-zinc-800 px-3 py-1 rounded text-xs">
+                            <span class="text-indigo-400 font-bold" id="current-step">1</span> <span class="text-zinc-600">/ 10</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider">Nota Acumulada:</span>
+                        <div class="bg-indigo-950/50 border border-indigo-800/40 px-3 py-1 rounded text-xs text-indigo-300 font-bold">
+                            <span id="score-display">0.0</span> / 10.0
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor de Código -->
+                <div class="glass-panel overflow-hidden border border-zinc-800 flex flex-col h-[520px]">
+                    <!-- Barra de Controle do Arquivo -->
+                    <div class="bg-[#0b0c13] px-4 py-3 flex items-center justify-between border-b border-zinc-800/80">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping"></span>
+                            <span class="text-xs code-font text-zinc-400">roteiro_pratico_03.html</span>
+                        </div>
+                        <span class="text-[10px] text-zinc-600 font-bold">UTF-8</span>
+                    </div>
+
+                    <!-- Corpo Principal do Editor -->
+                    <div class="p-6 flex-grow flex flex-col justify-between overflow-y-auto">
+                        <!-- Enunciado e Pergunta Teórica -->
+                        <div class="space-y-4">
+                            <span class="text-xs text-indigo-400 font-bold tracking-widest block uppercase" id="activity-id-label">// ATIVIDADE 1</span>
+                            <p id="question-text" class="text-base md:text-lg text-white font-medium leading-relaxed">
+                                <!-- Texto da Pergunta -->
+                            </p>
+                        </div>
+
+                        <!-- Opções de Seleção de Tags -->
+                        <div id="options-grid" class="grid grid-cols-1 gap-3 mt-4">
+                            <!-- Botões dinâmicos de resposta -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIREITA: SIMULADOR DE TELA (5 COLUNAS) -->
+            <div class="lg:col-span-5 space-y-4">
+                <span class="text-xs text-zinc-500 font-bold uppercase tracking-wider block px-1">Navegador Simulador (Preview)</span>
+                
+                <div class="glass-panel border border-zinc-800 overflow-hidden h-[520px] flex flex-col">
+                    <!-- Barra de Endereços do Navegador -->
+                    <div class="bg-zinc-900/90 p-3 flex items-center gap-3 border-b border-zinc-800">
+                        <div class="flex gap-1">
+                            <span class="w-2.5 h-2.5 bg-zinc-700 rounded-full"></span>
+                            <span class="w-2.5 h-2.5 bg-zinc-700 rounded-full"></span>
+                        </div>
+                        <div class="bg-zinc-950 px-3 py-1 rounded text-[10px] code-font text-zinc-500 flex-grow truncate">
+                            localhost:8080/lpti/pratica3/index.html
+                        </div>
+                    </div>
+
+                    <!-- Janela de Renderização Visual -->
+                    <div id="preview-render" class="preview-window p-4 flex-grow overflow-y-auto font-sans">
+                        <!-- Renderização Simulada e Dinâmica baseada na pergunta atual -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TELA FINAL DE RESULTADO -->
+        <div id="end-screen" class="hidden text-center space-y-8 max-w-2xl mx-auto">
+            <div class="space-y-3">
+                <div class="inline-flex px-3 py-1 bg-emerald-950/50 border border-emerald-500/30 text-xs text-emerald-400 font-bold uppercase tracking-widest rounded-full">
+                    ✔ Teste Concluído
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black text-white tracking-tight title-font">
+                    COMPILAÇÃO CONCLUÍDA
+                </h2>
+                <p class="text-zinc-400 text-sm font-mono">Ficha de avaliação gerada com sucesso para o diário escolar</p>
+            </div>
+
+            <div id="final-stats" class="glass-panel p-8 w-full text-center space-y-6">
+                <!-- Estatísticas e feedback de nota final -->
+            </div>
+
+            <div>
+                <button onclick="location.reload()" class="px-8 py-3 bg-zinc-800 border border-zinc-700 text-white rounded-lg hover:bg-zinc-700 transition-all font-bold tracking-widest text-xs uppercase">
+                    RECARREGAR EXPERIMENTO
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sintetizador de Áudio Nativo para Imersão de Software
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSynthSound(freq, duration, type = 'sine', slide = 0) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                if (slide > 0) {
+                    osc.frequency.exponentialRampToValueAtTime(slide, audioCtx.currentTime + duration);
+                }
+
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                // Navegador bloqueou áudio nativo
+            }
+        }
+
+        const soundClick = () => playSynthSound(900, 0.04, 'triangle');
+        const soundHover = () => playSynthSound(1100, 0.02, 'sine');
+        const soundCorrect = () => {
+            playSynthSound(587.33, 0.1, 'sine'); // Ré
+            setTimeout(() => playSynthSound(783.99, 0.1, 'sine'), 80); // Sol
+            setTimeout(() => playSynthSound(880, 0.15, 'sine'), 160); // Lá
+        };
+        const soundWrong = () => {
+            playSynthSound(280, 0.2, 'sawtooth');
+            setTimeout(() => playSynthSound(190, 0.25, 'sawtooth'), 120);
+        };
+
+        const database = [
+            {
+                activityId: 1,
+                q: "<b>[Atividade 2 do Roteiro]</b> No trecho de código solicitado pelo Professor Paiva, <code>&lt;img src=\"figura.jpg\" alt=\"Figura\"&gt;</code>, qual é a finalidade técnica específica do atributo <b>alt</b>?",
+                options: [
+                    "Exibir um texto alternativo caso a imagem de arquivo físico não carregue ou para fins de acessibilidade.",
+                    "Configurar o link de clique para onde o usuário será direcionado.",
+                    "Determinar a cor da borda ao redor do contêiner da imagem.",
+                    "Definir que a imagem será centralizada horizontalmente na tela do navegador."
+                ],
+                answer: 0,
+                previewBefore: `
+                    <div class="text-center p-4">
+                        <p class="text-sm font-semibold mb-2 text-zinc-600">[Simulação: Carregamento Falhou]</p>
+                        <div class="w-32 h-32 mx-auto border-2 border-dashed border-red-300 flex items-center justify-center rounded bg-red-50">
+                            <span class="text-3xl">❌</span>
+                        </div>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="text-center p-4">
+                        <p class="text-sm font-semibold mb-2 text-green-600">[Simulação: ALT Renderizado]</p>
+                        <div class="w-48 h-32 mx-auto border border-zinc-300 flex items-center justify-center rounded bg-zinc-100 p-2 text-center">
+                            <p class="text-xs text-red-500 font-bold font-mono">Texto Alternativo: "Figura"</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                activityId: 2,
+                q: "<b>[Atividade 3 do Roteiro]</b> Ao implementar as dimensões na Atividade 3 utilizando <code>height=\"200\" width=\"200\"</code> dentro da tag de imagem, qual é o principal benefício de performance proporcionado ao navegador?",
+                options: [
+                    "Aumentar a resolução original da imagem antes do carregamento em disco.",
+                    "Fazer com que o navegador monte a página mais rapidamente, pois reserva o espaço em pixels antecipadamente.",
+                    "Garantir a remoção automática da borda padrão azul do elemento.",
+                    "Adicionar filtros automáticos de brilho e contraste nas imagens digitais."
+                ],
+                answer: 1,
+                previewBefore: `
+                    <div class="p-4 border-2 border-yellow-200 rounded bg-yellow-50 text-center">
+                        <p class="text-xs text-yellow-700 font-semibold animate-pulse">Aguardando carregar para descobrir tamanho...</p>
+                        <div class="w-12 h-12 bg-yellow-200 mx-auto mt-2 rounded"></div>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="p-4 border-2 border-emerald-300 rounded bg-emerald-50 text-center">
+                        <p class="text-xs text-emerald-700 font-bold">Espaço de 200x200px reservado com sucesso no layout!</p>
+                        <div class="w-[200px] h-[200px] border border-emerald-400 bg-white mx-auto mt-2 flex items-center justify-center text-xs font-mono">200 x 200</div>
+                    </div>
+                `
+            },
+            {
+                activityId: 3,
+                q: "<b>[Atividade 3 do Roteiro]</b> Qual é o papel da tag semântica <b>&lt;figcaption&gt;</b> incluída no exercício de refinamento da imagem?",
+                options: [
+                    "Aumentar a espessura da borda decorativa da imagem.",
+                    "Inserir uma legenda descritiva de texto vinculada à figura agrupada no contêiner.",
+                    "Forçar o alinhamento da imagem com a base do texto de parágrafo.",
+                    "Determinar o caminho do arquivo de imagem do diretório local."
+                ],
+                answer: 1,
+                previewBefore: `
+                    <div class="text-center p-4 bg-zinc-50 rounded border border-zinc-200">
+                        <div class="w-full h-24 bg-slate-200 rounded flex items-center justify-center text-slate-500 font-mono text-xs">figura.jpg</div>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="text-center p-4 bg-zinc-50 rounded border border-zinc-200">
+                        <div class="w-full h-24 bg-slate-300 rounded flex items-center justify-center text-slate-600 font-mono text-xs">figura.jpg</div>
+                        <p class="text-xs text-indigo-600 font-bold mt-2 font-mono">&lt;figcaption&gt;Nossa Figura Melhorada&lt;/figcaption&gt;</p>
+                    </div>
+                `
+            },
+            {
+                activityId: 4,
+                q: "<b>[Teoria do Roteiro - BORDER]</b> Segundo o roteiro de prática, quando uma imagem faz o papel de âncora de um link, ela por padrão ganha uma borda colorida. Como desabilitamos totalmente essa borda para fins estéticos?",
+                options: [
+                    "Utilizando o atributo border=\"1\"",
+                    "Configurando a propriedade border=0 diretamente na tag da imagem.",
+                    "Adicionando a tag <figcaption> vazia ao redor da imagem.",
+                    "Utilizando o atributo alt=\"no-border\"."
+                ],
+                answer: 1,
+                previewBefore: `
+                    <div class="text-center p-4">
+                        <p class="text-xs text-zinc-500 mb-1">Comportamento Padrão de Link:</p>
+                        <a href="#" class="inline-block p-1 border-4 border-blue-500">
+                            <div class="w-20 h-20 bg-slate-200"></div>
+                        </a>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="text-center p-4">
+                        <p class="text-xs text-green-600 font-bold mb-1">Imagem sem borda (BORDER=0):</p>
+                        <a href="#" class="inline-block">
+                            <div class="w-20 h-20 bg-slate-200 border border-zinc-300"></div>
+                        </a>
+                    </div>
+                `
+            },
+            {
+                activityId: 5,
+                q: "<b>[Teoria de Links]</b> Na sintaxe estrutural padrão estudada no material, <code>&lt;a href=\"url\"&gt; Texto do link &lt;/a&gt;</code>, qual componente ficará visível e acessível para o clique do leitor?",
+                options: [
+                    "O código 'url' completo",
+                    "Apenas o elemento 'Texto do link'",
+                    "A tag '<a href>' que roda internamente",
+                    "O caminho absoluto local do servidor"
+                ],
+                answer: 1,
+                previewBefore: `
+                    <div class="text-center p-4 bg-zinc-50 rounded font-mono text-xs text-zinc-400">
+                        &lt;a href="url"&gt;...&lt;/a&gt;
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="text-center p-4 bg-indigo-50 border border-indigo-200 rounded">
+                        <a href="#" class="text-indigo-600 underline font-bold text-sm">Texto do link</a>
+                    </div>
+                `
+            },
+            {
+                activityId: 6,
+                q: "<b>[Atividade 4 do Roteiro]</b> No exercício 4 do roteiro prático, qual é a estrutura de link correta configurada para direcionar o usuário ao Blog do Professor Paiva?",
+                options: [
+                    "&lt;a link=\"https://professorpaiva.blogspot.com\"&gt; Blog Paiva &lt;/a&gt;",
+                    "&lt;a src=\"https://professorpaiva.blogspot.com\"&gt; Blog Paiva &lt;/a&gt;",
+                    "&lt;a href=\"https://professorpaiva.blogspot.com\"&gt; Blog Paiva &lt;/a&gt;",
+                    "&lt;img href=\"https://professorpaiva.blogspot.com\" alt=\"Blog Paiva\"&gt;"
+                ],
+                answer: 2,
+                previewBefore: `
+                    <div class="p-4 text-center">
+                        <p class="text-xs text-zinc-400">Veja o Blog Prof Paiva [Aguardando Link...]</p>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="p-4 text-center bg-zinc-50 rounded border">
+                        <p class="text-xs text-zinc-700">
+                            Veja o Blog Prof Paiva 
+                            <a href="https://professorpaiva.blogspot.com" target="_blank" class="text-blue-600 underline font-bold">Blog Paiva</a>
+                        </p>
+                    </div>
+                `
+            },
+            {
+                activityId: 7,
+                q: "<b>[Atividade 5 do Roteiro]</b> Na Atividade 5, o link externo do Google Maps possui a sintaxe <code>href=\"https://maps.google.com.br/?q=João Pessoa\"</code>. O que o parâmetro <b>?q=João Pessoa</b> executa ao abrir a página do mapa?",
+                options: [
+                    "Ele bloqueia o mapa de aceitar coordenadas manuais.",
+                    "Inicia o sistema de busca inteligente apontando diretamente para João Pessoa.",
+                    "Muda o idioma padrão do Google Maps para o dialeto paraibano.",
+                    "Faz o download de um mapa vetorial estático da capital."
+                ],
+                answer: 1,
+                previewBefore: `
+                    <div class="p-4 text-center">
+                        <a href="#" class="text-xs text-blue-500 underline">João Pessoa - Paraíba</a>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="p-4 bg-zinc-900 rounded text-center text-emerald-400 font-mono text-xs">
+                        <p>&gt; Abrindo Google Maps...</p>
+                        <p class="text-white mt-1">Busca ativada (?q=): "João Pessoa"</p>
+                    </div>
+                `
+            },
+            {
+                activityId: 8,
+                q: "<b>[Atividade 6 do Roteiro]</b> No exercício 6, você deve melhorar o seu <b>Currículo Pessoal</b> integrando imagem e links. Qual a melhor estrutura semântica de marcação para carregar sua foto ao lado do link para seu portfólio?",
+                options: [
+                    "Usar &lt;img src=\"suafoto.jpg\" alt=\"Sua Foto\"&gt; e &lt;a href=\"portfolio.html\"&gt; Portfólio &lt;/a&gt;",
+                    "Usar &lt;a src=\"suafoto.jpg\" href=\"portfolio.html\"&gt;",
+                    "Usar &lt;figure href=\"portfolio.html\"&gt;&lt;img src=\"suafoto.jpg\"&gt;&lt;/figure&gt;",
+                    "Usar &lt;img link=\"portfolio.html\" alt=\"suafoto.jpg\"&gt;"
+                ],
+                answer: 0,
+                previewBefore: `
+                    <div class="p-4 border rounded bg-zinc-50">
+                        <h4 class="text-sm font-bold border-b pb-1">Currículo Sem Mídias</h4>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="p-4 border rounded bg-white shadow-sm flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold">👤</div>
+                        <div>
+                            <h4 class="text-xs font-bold text-zinc-800">Currículo Atualizado</h4>
+                            <a href="#" class="text-[10px] text-indigo-600 underline font-bold">Acessar Portfólio</a>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                activityId: 9,
+                q: "<b>[Atividade 7 do Roteiro]</b> Na atividade para criar uma página que permita ao usuário assistir a videoaulas do YouTube sobre assuntos de interesse, qual tag e qual atributo principal devem ser utilizados?",
+                options: [
+                    "A tag &lt;img&gt; com o atributo alt.",
+                    "A tag &lt;a&gt; com o atributo href apontando para a URL do vídeo no YouTube.",
+                    "A tag &lt;figure&gt; com o atributo src.",
+                    "A tag &lt;figcaption&gt; com o atributo name."
+                ],
+                answer: 1,
+                previewBefore: `
+                    <div class="p-4 text-center">
+                        <p class="text-xs text-zinc-500 font-bold">Lista de Videoaulas de TI:</p>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="p-4 bg-zinc-50 rounded border space-y-2">
+                        <p class="text-xs text-zinc-700 font-bold">Lista de Videoaulas de TI:</p>
+                        <a href="https://youtube.com" target="_blank" class="block text-xs text-red-600 font-semibold underline">▶️ Aula 01 - Introdução a Algoritmos (YouTube)</a>
+                    </div>
+                `
+            },
+            {
+                activityId: 10,
+                q: "<b>[Atividade de Marcador do Roteiro]</b> Para fazer o navegador pular até a tag <code>&lt;h2 id=\"C4\"&gt;Capítulo 4&lt;/h2&gt;</code> em uma página muito longa, qual deve ser a sintaxe do link de origem?",
+                options: [
+                    "&lt;a href=\"C4\"&gt; Capítulo 4 &lt;/a&gt;",
+                    "&lt;a href=\"#C4\"&gt; Capítulo 4 &lt;/a&gt;",
+                    "&lt;a src=\"#C4\"&gt; Capítulo 4 &lt;/a&gt;",
+                    "&lt;a id=\"C4\"&gt; Capítulo 4 &lt;/a&gt;"
+                ],
+                answer: 1,
+                previewBefore: `
+                    <div class="p-4 bg-zinc-100 rounded h-32 overflow-y-auto" id="scroll-sim">
+                        <p class="text-[10px] text-zinc-500 font-bold mb-10">Topo do Documento Longo</p>
+                    </div>
+                `,
+                previewCorrect: `
+                    <div class="p-4 bg-indigo-50 rounded h-32 overflow-y-auto transition-all duration-1000" id="scroll-sim">
+                        <div class="h-[120px] text-[10px] text-zinc-400">Efetuando salto de página...</div>
+                        <div class="p-2 bg-indigo-600 text-white font-bold rounded text-[10px] font-mono" id="cap4-target">
+                            &lt;h2 id="C4"&gt;Capítulo 4&lt;/h2&gt;
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let gameQuestions = [];
+
+        function startGame() {
+            soundClick();
+            gameQuestions = [...database].sort(() => Math.random() - 0.5);
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = gameQuestions[currentIdx];
+            document.getElementById('current-step').innerText = currentIdx + 1;
+            document.getElementById('activity-id-label').innerHTML = `// ATIVIDADE PRÁTICA ${q.activityId}`;
+            document.getElementById('question-text').innerHTML = q.q;
+            document.getElementById('preview-render').innerHTML = q.previewBefore;
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "btn-option p-4 rounded-xl text-left text-xs md:text-sm font-medium flex gap-3 items-center w-full";
+                btn.onmouseenter = () => soundHover();
+                btn.innerHTML = `
+                    <span class="flex-shrink-0 w-8 h-8 rounded-lg bg-zinc-850/80 border border-zinc-700/50 flex items-center justify-center text-indigo-400 font-bold">${String.fromCharCode(65 + idx)}</span>
+                    <span class="text-zinc-200">${opt}</span>
+                `;
+                btn.onclick = () => checkAnswer(idx, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx, btn) {
+            const q = gameQuestions[currentIdx];
+            const allBtns = document.querySelectorAll('.btn-option');
+            allBtns.forEach(b => b.disabled = true);
+
+            const isCorrect = selectedIdx === q.answer;
+
+            if (isCorrect) {
+                soundCorrect();
+                btn.classList.add('correct');
+                score += 1.0;
+                document.getElementById('score-display').innerText = score.toFixed(1);
+                document.getElementById('preview-render').innerHTML = q.previewCorrect;
+                
+                setTimeout(() => {
+                    const scrollSim = document.getElementById('scroll-sim');
+                    if(scrollSim) {
+                        scrollSim.scrollTop = 250;
+                    }
+                }, 100);
+
+            } else {
+                soundWrong();
+                btn.classList.add('wrong');
+                allBtns[q.answer].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentIdx++;
+                if (currentIdx < gameQuestions.length) {
+                    loadQuestion();
+                } else {
+                    finishGame();
+                }
+            }, 2600);
+        }
+
+        function finishGame() {
+            soundCorrect();
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            let title = "";
+            let description = "";
+            let styleClass = "";
+
+            if (score === 10) {
+                title = "Mestre Web (Senior)";
+                description = "Você demonstrou conhecimento impecável no Roteiro de Prática 03! O Professor Paiva estaria orgulhoso.";
+                styleClass = "text-green-400";
+            } else if (score >= 7) {
+                title = "Desenvolvedor Pleno Web";
+                description = "Excelente domínio das tags, atributos de imagem, links externos e caminhos relativos de arquivos.";
+                styleClass = "text-indigo-400";
+            } else if (score >= 5) {
+                title = "Desenvolvedor Júnior Web";
+                description = "Boa base estrutural, mas ainda necessita de revisão nas âncoras locais e tags semânticas.";
+                styleClass = "text-yellow-400";
+            } else {
+                title = "Estagiário Web (Reboot Recomendado)";
+                description = "É importante refazer a leitura do Roteiro Prático de Links e Figuras para fixar os conceitos.";
+                styleClass = "text-red-500";
+            }
+
+            document.getElementById('final-stats').innerHTML = `
+                <p class="${styleClass} text-xl md:text-2xl font-black tracking-wider uppercase mb-2">${title}</p>
+                <div class="h-px bg-zinc-800 w-full my-4"></div>
+                <div class="flex justify-center items-baseline gap-1 my-6">
+                    <span class="text-7xl font-black text-white">${score.toFixed(1)}</span>
+                    <span class="text-2xl text-zinc-600 font-bold">/ 10.0 PONTOS</span>
+                </div>
+                <p class="text-zinc-400 text-sm max-w-lg mx-auto leading-relaxed">${description}</p>
+                <div class="bg-black/60 p-4 border border-zinc-800 rounded font-mono text-xs text-zinc-500 max-w-md mx-auto space-y-1 mt-6">
+                    <p class="text-left">&gt; logs_roteiro: LPTI_03_COMPILADO</p>
+                    <p class="text-left">&gt; status_aluno: AVALIAÇÃO_TERMINAL</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
