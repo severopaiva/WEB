@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Ético e Jurídico em TI - IFPB</title>
+    <style>
+        :root {
+            --ifpb-verde: #32a041;
+            --ifpb-vermelho: #e41c1c;
+            --ifpb-cinza: #f4f4f4;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--ifpb-cinza); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--ifpb-verde); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .header img { height: 80px; object-fit: contain; }
+        h1 { color: var(--ifpb-verde); text-align: center; font-size: 24px; }
+        .intro { text-align: center; margin-bottom: 20px; }
+        input[type="text"] { padding: 10px; width: 250px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px; }
+        .question { display: none; margin-top: 20px; }
+        .question.active { display: block; }
+        .scenario { background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid var(--ifpb-verde); margin-bottom: 15px; font-weight: bold; }
+        .options { list-style: none; padding: 0; }
+        .options li { margin-bottom: 10px; }
+        .options button { width: 100%; text-align: left; padding: 12px; border: 1px solid #ddd; border-radius: 5px; background: white; cursor: pointer; transition: 0.3s; font-size: 15px; }
+        .options button:hover { background: #f0f0f0; border-color: var(--ifpb-verde); }
+        .btn-start, .btn-next { background: var(--ifpb-verde); color: white; border: none; padding: 12px 30px; border-radius: 5px; cursor: pointer; font-weight: bold; display: block; margin: 20px auto; }
+        #resultado { display: none; text-align: center; padding: 30px; }
+        .expert { color: gold; font-size: 30px; font-weight: bold; }
+        .profissional { color: var(--ifpb-verde); font-size: 28px; }
+        .em-formacao { color: orange; font-size: 26px; }
+        .estudar { color: var(--ifpb-vermelho); font-size: 24px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="https://www.ifpb.edu.br/static/media/logo.20d47050.png" alt="Logo IFPB">
+        
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrQS4FVDCFfhL_0x_zK4sKpJCUwfpHvJ1SV9aPqKjfOA&s=10" alt="Logo Professor Paiva">
+    </div>
+
+    <h1>DESAFIO: ÉTICA E DIREITO NA TI</h1>
+
+    <div id="setup" class="intro">
+        <p>Bem-vindo ao simulador de dilemas éticos para profissionais de TI.</p>
+        <p><strong>Digite seu nome para iniciar:</strong></p>
+        <input type="text" id="nomeAluno" placeholder="Nome do Aluno">
+        <button class="btn-start" onclick="iniciarJogo()">INICIAR DESAFIO</button>
+    </div>
+
+    <div id="quiz">
+        <!-- Questão 1 -->
+        <div class="question" id="q0">
+            <div class="scenario">Cenário 1: O chefe pede ao técnico que instale um software espião (keylogger) que lê tudo que se digita no teclado para monitorar usuários sem aviso.</div>
+            <ul class="options">
+                <li><button onclick="responder(0, 'A')">A) É dever do técnico obedecer, pois a empresa é dona do hardware.</button></li>
+                <li><button onclick="responder(0, 'B')">B) Viola o Art. 5º, inciso X da CF/88 (intimidade e vida privada).</button></li>
+                <li><button onclick="responder(0, 'C')')">C) É permitido se o software for apenas para fins de produtividade.</button></li>
+                <li><button onclick="responder(0, 'D')">D) O Código de Ética da SBC obriga o sigilo apenas para dados externos.</button></li>
+                <li><button onclick="responder(0, 'E')">E) A LGPD isenta empresas de monitoramento interno.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 2 -->
+        <div class="question" id="q1">
+            <div class="scenario">Cenário 2: O chefe solicita o monitoramento dos e-mails privados de funcionários específicos sem ordem judicial ou processo formal.</div>
+            <ul class="options">
+                <li><button onclick="responder(1, 'A')">A) O monitoramento é legal se feito em horário comercial.</button></li>
+                <li><button onclick="responder(1, 'B')">B) Fere o sigilo de comunicações previsto no Art. 5º, XII da CF/88.</button></li>
+                <li><button onclick="responder(1, 'C')">C) É uma prática recomendada pelo Marco Civil da Internet.</button></li>
+                <li><button onclick="responder(1, 'D')">D) O técnico é imune se houver autorização verbal do gestor.</button></li>
+                <li><button onclick="responder(1, 'E')">E) Só é crime se os dados forem vendidos para terceiros.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 3 -->
+        <div class="question" id="q2">
+            <div class="scenario">Cenário 3: O chefe pede que dados de saúde de um usuário sejam analisados detalhadamente sem o conhecimento ou autorização dele.</div>
+            <ul class="options">
+                <li><button onclick="responder(2, 'A')">A) Dados de saúde são sensíveis e exigem consentimento ou base legal (LGPD).</button></li>
+                <li><button onclick="responder(2, 'B')">B) TI tem "livre acesso" por necessidade técnica de sistema.</button></li>
+                <li><button onclick="responder(2, 'C')">C) A SBC incentiva a análise de dados para bem-estar social.</button></li>
+                <li><button onclick="responder(2, 'D')">D) Não há proteção legal para dados médicos em nuvem.</button></li>
+                <li><button onclick="responder(2, 'E')">E) A análise é válida se for para melhoria de planos de saúde.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 4 -->
+        <div class="question" id="q3">
+            <div class="scenario">Cenário 4: Um técnico de redes acessa o cadastro de uma aluna para obter endereço e telefone por interesse pessoal.</div>
+            <ul class="options">
+                <li><button onclick="responder(3, 'A')">A) É um exercício regular de direito do administrador de banco de dados.</button></li>
+                <li><button onclick="responder(3, 'B')">B) Viola o Art. 5º (Sigilo Profissional) e Art. 10 (Privacidade) da SBC.</button></li>
+                <li><button onclick="responder(3, 'C')">C) É permitido se os dados já forem públicos em redes sociais.</button></li>
+                <li><button onclick="responder(3, 'D')">D) O IFPB permite acesso livre a dados de alunos por técnicos.</button></li>
+                <li><button onclick="responder(3, 'E')">E) Não há implicação ética se o técnico não divulgar os dados.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 5 -->
+        <div class="question" id="q4">
+            <div class="scenario">Cenário 5: Um técnico altera a rotina do sistema que sorteia juízes de processos a pedido de um advogado de defesa.</div>
+            <ul class="options">
+                <li><button onclick="responder(4, 'A')">A) É uma "otimização" técnica válida para agilizar a justiça.</button></li>
+                <li><button onclick="responder(4, 'B')">B) Contraria o dever de honestidade e justiça (Art. 2º da SBC).</button></li>
+                <li><button onclick="responder(4, 'C')">C) O técnico não responde por lógica de sistema, apenas por hardware.</button></li>
+                <li><button onclick="responder(4, 'D')">D) É permitido se houver uma "compensação por serviço extra".</button></li>
+                <li><button onclick="responder(4, 'E')">E) A responsabilidade é exclusiva do advogado solicitante.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 6 -->
+        <div class="question" id="q5">
+            <div class="scenario">Cenário 6: O técnico de redes entrega a senha do servidor de backup da empresa para um técnico da empresa concorrente.</div>
+            <ul class="options">
+                <li><button onclick="responder(5, 'A')">A) É um ato de solidariedade entre colegas de profissão.</button></li>
+                <li><button onclick="responder(5, 'B')">B) Viola gravemente o dever de sigilo (Art. 5º) e fidelidade contratual.</button></li>
+                <li><button onclick="responder(5, 'C')">C) Se for para fins de estudo técnico, é permitido pela SBC.</button></li>
+                <li><button onclick="responder(5, 'D')">D) Só é violação se o concorrente apagar os dados do servidor.</button></li>
+                <li><button onclick="responder(5, 'E')">E) Backup não é considerado dado crítico para o Direito.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 7 -->
+        <div class="question" id="q6">
+            <div class="scenario">Cenário 7: Um técnico de redes que trabalha em um hospital divulga lista de pacientes com AIDS para um portal de notícias.</div>
+            <ul class="options">
+                <li><button onclick="responder(6, 'A')">A) É liberdade de expressão garantida pelo Artigo 5º da CF/88.</button></li>
+                <li><button onclick="responder(6, 'B')">B) Viola o dever de não comprometer a honra e privacidade (Art. 10, SBC).</button></li>
+                <li><button onclick="responder(6, 'C')')">C) É um serviço de utilidade pública para controle de epidemias.</button></li>
+                <li><button onclick="responder(6, 'D')">D) A culpa é do portal de notícias por aceitar a informação.</button></li>
+                <li><button onclick="responder(6, 'E')">E) Técnicos de TI possuem imunidade informativa em hospitais.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 8 -->
+        <div class="question" id="q7">
+            <div class="scenario">Cenário 8: O profissional de TI vende a senha do servidor de projetos estratégicos para a empresa concorrente.</div>
+            <ul class="options">
+                <li><button onclick="responder(7, 'A')">A) É uma forma legítima de negociar o próprio trabalho intelectual.</button></li>
+                <li><button onclick="responder(7, 'B')">B) Crime de espionagem industrial e falta de honestidade (Art. 2º, SBC).</button></li>
+                <li><button onclick="responder(7, 'C')">C) O técnico é dono da senha, logo pode comercializá-la.</button></li>
+                <li><button onclick="responder(7, 'D')">D) Prática comum que não gera demissão por justa causa.</button></li>
+                <li><button onclick="responder(7, 'E')">E) A responsabilidade pelo vazamento é de quem não mudou a senha.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 9 -->
+        <div class="question" id="q8">
+            <div class="scenario">Cenário 9: Um técnico descobre que a presidência da Assembleia mandou fazer software para quebrar sigilo de votações secretas.</div>
+            <ul class="options">
+                <li><button onclick="responder(8, 'A')">A) O técnico deve obedecer por respeito à hierarquia política.</button></li>
+                <li><button onclick="responder(8, 'B')">B) Deve denunciar, pois o ato viola o interesse social e a lei (Art. 7º, SBC).</button></li>
+                <li><button onclick="responder(8, 'C')">C) Votações parlamentares não possuem direito ao sigilo técnico.</button></li>
+                <li><button onclick="responder(8, 'D')">D) Criar o software é apenas um "desafio técnico", sem peso moral.</button></li>
+                <li><button onclick="responder(8, 'E')">E) O técnico deve cobrar mais caro para garantir o silêncio.</button></li>
+            </ul>
+        </div>
+
+        <!-- Questão 10 -->
+        <div class="question" id="q9">
+            <div class="scenario">Cenário 10: Técnico recebe proposta de dobro de salário, mas precisa abandonar o emprego atual imediatamente sem aviso prévio.</div>
+            <ul class="options">
+                <li><button onclick="responder(9, 'A')">A) O ganho financeiro justifica o abandono imediato.</button></li>
+                <li><button onclick="responder(9, 'B')">B) Viola o dever de honrar compromissos e contratos (Art. 8º da SBC).</button></li>
+                <li><button onclick="responder(9, 'C')">C) Em TI não existe obrigatoriedade de aviso prévio por lei.</button></li>
+                <li><button onclick="responder(9, 'D')">D) O técnico deve sabotar o sistema antes de sair para se vingar.</button></li>
+                <li><button onclick="responder(9, 'E')">E) Contratos de TI são sempre informais e não geram deveres.</button></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="resultado">
+        <h2 id="resNome"></h2>
+        <p style="font-size: 20px;">Seu desempenho: <span id="resPct" style="font-weight: bold;"></span></p>
+        <div id="resNivel"></div>
+        <p id="resMsg" style="margin-top: 20px; font-style: italic;"></p>
+        <button class="btn-start" onclick="location.reload()">TENTAR NOVAMENTE</button>
+    </div>
+</div>
+
+<script>
+    let currentQuestion = 0;
+    let acertos = 0;
+    const totalQuestions = 10;
+    const gabarito = ['B', 'B', 'A', 'B', 'B', 'B', 'B', 'B', 'B', 'B'];
+
+    function iniciarJogo() {
+        let nome = document.getElementById("nomeAluno").value;
+        if (!nome) { alert("Por favor, digite seu nome!"); return; }
+        document.getElementById("setup").style.display = "none";
+        document.getElementById("q0").classList.add("active");
+    }
+
+    function responder(index, resp) {
+        if (resp === gabarito[index]) {
+            acertos++;
+        }
+        
+        document.getElementById(`q${index}`).classList.remove("active");
+        currentQuestion++;
+
+        if (currentQuestion < totalQuestions) {
+            document.getElementById(`q${currentQuestion}`).classList.add("active");
+        } else {
+            mostrarResultado();
+        }
+    }
+
+    function mostrarResultado() {
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById("resultado").style.display = "block";
+        
+        let nome = document.getElementById("nomeAluno").value;
+        let pct = (acertos / totalQuestions) * 100;
+        let nivel = "";
+        let classe = "";
+        let msg = "";
+
+        if (pct === 100) {
+            nivel = "EXPERT"; classe = "expert"; msg = "Parabéns! Você domina os princípios éticos da SBC e os direitos fundamentais [1-3].";
+        } else if (pct >= 70) {
+            nivel = "PROFISSIONAL"; classe = "profissional"; msg = "Ótimo desempenho. Você demonstra maturidade ética para atuar no mercado de TI.";
+        } else if (pct >= 40) {
+            nivel = "EM FORMAÇÃO"; classe = "em-formacao"; msg = "Você conhece o básico, mas precisa revisar o Código de Ética da SBC [1].";
+        } else {
+            nivel = "PRECISA ESTUDAR"; classe = "estudar"; msg = "Atenção: suas decisões podem gerar graves consequências legais e éticas. Revise a Unidade 3 do curso!";
+        }
+
+        document.getElementById("resNome").innerText = `Cidadão Digital: ${nome}`;
+        document.getElementById("resPct").innerText = `${pct}% de Acerto`;
+        document.getElementById("resNivel").innerHTML = `<span class="${classe}">${nivel}</span>`;
+        document.getElementById("resMsg").innerText = msg;
+    }
+</script>
+
+</body>
+</html>
